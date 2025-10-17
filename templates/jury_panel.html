@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Панель Жюри</title>
+<style>
+body {margin:0; padding:0; background:#0b0b0b; color:#0ff; font-family:'Courier New', monospace;}
+header {padding:10px; background:#111; text-align:center; font-size:1.5em;}
+.container {display:flex;}
+.sidebar {width:250px; background:#111; padding:10px; overflow-y:auto;}
+.main {flex:1; padding:10px; overflow:auto;}
+table {width:100%; border-collapse:collapse;}
+th,td {border:1px solid #0ff; padding:5px; text-align:center;}
+th {background:#222;}
+.highlight {animation: highlight 0.5s ease;}
+@keyframes highlight {0%{background:#0ff;color:#000;}100%{background:#111;color:#0ff;}}
+.score-inputs {display:flex; gap:2px; margin-bottom:5px;}
+.score-input {width:30px; padding:2px; background:#111; border:1px solid #0ff; color:#0ff; text-align:center; font-size:12px;}
+.score-display {font-size:12px; color:#0aa;}
+.my-column {background:#001100 !important; border:2px solid #00ff00 !important;}
+.instructions {background:#111; padding:10px; border:1px solid #0ff; border-radius:5px; font-size:12px; line-height:1.4;}
+.score-breakdown {font-size:12px; line-height:1.3;}
+.score-breakdown div {margin:2px 0;}
+.total-score {font-weight:bold; color:#0ff; border-top:1px solid #0ff; padding-top:2px; margin-top:4px;}
+.finalize-section {margin-top:5px; text-align:center;}
+.finalize-btn {background:#ff6600; color:#000; border:none; padding:5px 10px; font-size:11px; border-radius:3px; cursor:pointer; font-weight:bold;}
+.finalize-btn:hover {background:#ff8800;}
+.finalized-text {color:#00ff00; font-size:11px; font-weight:bold;}
+.my-total {color:#00ff00; font-size:11px; font-weight:bold;}
+.score-input:disabled {background:#333; color:#666; cursor:not-allowed;}
+.participant-scores {font-size:12px; line-height:1.4;}
+.total-sum {font-weight:bold; color:#0ff; margin-bottom:5px;}
+.all-scores {margin-top:5px;}
+.jury-score {margin:2px 0; padding:2px; background:#111; border-radius:3px;}
+.finalized-indicator {color:#00ff00; font-weight:bold;}
+</style>
+</head>
+<body>
+<header>Жюри: {{ jury.name }} <a href="{{ url_for('home') }}" style="color:#f00; text-decoration:none;">[Выход]</a></header>
+<div class="container">
+<div class="sidebar">
+<h3>Инструкция</h3>
+<div class="instructions">
+<p>Вы можете редактировать только свою колонку (выделена зеленым). Остальные колонки доступны только для просмотра.</p>
+<p><strong>Важно:</strong> После выставления баллов нажмите "Финализировать" - после этого изменить оценки будет нельзя!</p>
+</div>
+<h3 style="margin-top:20px;">Лидерборд</h3>
+<table id="leaderboard" style="margin-top:10px;">
+<tr><th>Место</th><th>Участник</th><th>Баллы</th></tr>
+{% for l in leaderboard %}
+<tr id="lb-{{ l.name }}">
+  <td>
+    {% if loop.index == 1 %}🥇
+    {% elif loop.index == 2 %}🥈
+    {% elif loop.index == 3 %}🥉
+    {% else %}{{ loop.index }}
+    {% endif %}
+  </td>
+  <td>{{ l.name }}</td>
+  <td>{{ l.total }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<div class="main">
+<h3>Оценки участников</h3>
+<table id="score-table">
+<tr>
+<th>Участник</th>
+{% for j in jury_list %}
+<th class="{% if j.id == jury.id %}my-column{% endif %}">{{ j.name }}</th>
+{% endfor %}
+<th>Сумма</th>
+</tr>
+{% for p in participants %}
+<tr id="row-{{ p.id }}">
+<td>{{ p.name }}</td>
+{% for j in jury_list %}
+<td id="cell-{{ p.id }}-{{ j.id }}" class="{% if j.id == jury.id %}my-column{% endif %}">
+  {% if j.id == jury.id %}
+  <!-- Моя колонка - можно редактировать -->
+  <div class="score-inputs" id="inputs-{{ p.id }}-{{ j.id }}">
+    <input type="number" min="1" max="5" value="{{ scores[p.id][j.id]['contest1'] }}" 
+           class="score-input" data-participant="{{ p.id }}" data-jury="{{ j.id }}" data-contest="contest1" 
+           {% if scores[p.id][j.id]['finalized'] %}disabled{% endif %}>
+    <input type="number" min="1" max="5" value="{{ scores[p.id][j.id]['contest2'] }}" 
+           class="score-input" data-participant="{{ p.id }}" data-jury="{{ j.id }}" data-contest="contest2"
+           {% if scores[p.id][j.id]['finalized'] %}disabled{% endif %}>
+    <input type="number" min="1" max="5" value="{{ scores[p.id][j.id]['contest3'] }}" 
+           class="score-input" data-participant="{{ p.id }}" data-jury="{{ j.id }}" data-contest="contest3"
+           {% if scores[p.id][j.id]['finalized'] %}disabled{% endif %}>
+  </div>
+  <div class="score-display" id="display-{{ p.id }}-{{ j.id }}">
+    {{ scores[p.id][j.id]['contest1'] }}+{{ scores[p.id][j.id]['contest2'] }}+{{ scores[p.id][j.id]['contest3'] }}
+  </div>
+  <div class="finalize-section" id="finalize-{{ p.id }}-{{ j.id }}">
+    {% if not scores[p.id][j.id]['finalized'] %}
+    <button class="finalize-btn" data-participant="{{ p.id }}" data-jury="{{ j.id }}">Финализировать</button>
+    {% else %}
+    <span class="finalized-text">✓ Финализировано</span>
+    {% endif %}
+  </div>
+  {% else %}
+  <!-- Чужие колонки - только просмотр -->
+  <div class="score-breakdown">
+    <div>Конкурс 1: {{ scores[p.id][j.id]['contest1'] }} баллов</div>
+    <div>Конкурс 2: {{ scores[p.id][j.id]['contest2'] }} баллов</div>
+    <div>Конкурс 3: {{ scores[p.id][j.id]['contest3'] }} баллов</div>
+    <div class="total-score">Сумма: {{ scores[p.id][j.id]['contest1'] + scores[p.id][j.id]['contest2'] + scores[p.id][j.id]['contest3'] }}</div>
+  </div>
+  {% endif %}
+</td>
+{% endfor %}
+<td id="total-{{ p.id }}">
+  <div class="participant-scores">
+    <div class="total-sum">Общая сумма: {{ totals[p.id] }}</div>
+    {% set my_total = scores[p.id][jury.id]['contest1'] + scores[p.id][jury.id]['contest2'] + scores[p.id][jury.id]['contest3'] %}
+    {% if my_total > 0 %}
+    <div class="my-total">Мои баллы: {{ my_total }}</div>
+    {% endif %}
+    <div class="all-scores">
+      {% for j in jury_list %}
+      <div class="jury-score">
+        <strong>{{ j.name }}:</strong>
+        {{ scores[p.id][j.id]['contest1'] + scores[p.id][j.id]['contest2'] + scores[p.id][j.id]['contest3'] }}
+        {% if scores[p.id][j.id]['finalized'] %}
+        <span class="finalized-indicator">✓</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+
+<script>
+let ws;
+function connectWebSocket() {
+    ws = new WebSocket("ws://"+location.host+"/ws");
+    
+    ws.onopen = function() {
+        console.log("WebSocket connected");
+    };
+    
+    ws.onclose = function() {
+        console.log("WebSocket disconnected, reconnecting...");
+        setTimeout(connectWebSocket, 1000);
+    };
+    
+    ws.onerror = function(error) {
+        console.log("WebSocket error:", error);
+    };
+    
+    ws.onmessage = handleMessage;
+}
+
+connectWebSocket();
+
+function handleMessage(event) {
+    let data=JSON.parse(event.data);
+    if(data.type==='score_update'){
+        for(let p_id in data.scores){
+            for(let j_id in data.scores[p_id]){
+                let cell=document.getElementById(`cell-${p_id}-${j_id}`);
+                if(cell){
+                    let vals=data.scores[p_id][j_id];
+                    let total = vals.contest1 + vals.contest2 + vals.contest3;
+                    
+                    // Проверяем, это моя колонка или чужая
+                    if(cell.classList.contains('my-column')) {
+                        // Моя колонка - обновляем поля ввода
+                        let inputs = cell.querySelectorAll('.score-input');
+                        if(inputs.length >= 3) {
+                            inputs[0].value = vals.contest1;
+                            inputs[1].value = vals.contest2;
+                            inputs[2].value = vals.contest3;
+                            
+                            // Отключаем поля если финализировано
+                            if(vals.finalized) {
+                                inputs.forEach(input => input.disabled = true);
+                                let finalizeSection = document.getElementById(`finalize-${p_id}-${j_id}`);
+                                if(finalizeSection) {
+                                    finalizeSection.innerHTML = '<span class="finalized-text">✓ Финализировано</span>';
+                                }
+                            }
+                        }
+                        
+                        // Обновляем отображение суммы
+                        let display = document.getElementById(`display-${p_id}-${j_id}`);
+                        if(display) {
+                            display.textContent = `${vals.contest1}+${vals.contest2}+${vals.contest3}`;
+                            display.classList.add('highlight');
+                            setTimeout(()=>display.classList.remove('highlight'),500);
+                        }
+                    } else {
+                        // Чужая колонка - обновляем только отображение
+                        cell.innerHTML = `
+                            <div class="score-breakdown">
+                                <div>Конкурс 1: ${vals.contest1} баллов</div>
+                                <div>Конкурс 2: ${vals.contest2} баллов</div>
+                                <div>Конкурс 3: ${vals.contest3} баллов</div>
+                                <div class="total-score">Сумма: ${total}</div>
+                            </div>
+                        `;
+                        cell.classList.add('highlight');
+                        setTimeout(()=>cell.classList.remove('highlight'),500);
+                    }
+                }
+            }
+            let totalCell=document.getElementById(`total-${p_id}`);
+            if(totalCell) {
+                // Обновляем отображение участника с баллами от всех жюри
+                let participantScores = totalCell.querySelector('.participant-scores');
+                if(participantScores) {
+                    let totalSum = participantScores.querySelector('.total-sum');
+                    if(totalSum) totalSum.textContent = `Общая сумма: ${data.totals[p_id]}`;
+                    
+                    // Обновляем баллы от всех жюри
+                    let allScores = participantScores.querySelector('.all-scores');
+                    if(allScores) {
+                        allScores.innerHTML = '';
+                        // Получаем имена жюри из данных
+                        let juryNames = {};
+                        if(data.jury_list) {
+                            data.jury_list.forEach(j => {
+                                juryNames[j.id] = j.name;
+                            });
+                        }
+                        
+                        for(let j_id in data.scores[p_id]) {
+                            let j_vals = data.scores[p_id][j_id];
+                            let j_total = j_vals.contest1 + j_vals.contest2 + j_vals.contest3;
+                            let juryName = juryNames[j_id] || `Жюри ${j_id}`;
+                            let juryDiv = document.createElement('div');
+                            juryDiv.className = 'jury-score';
+                            juryDiv.innerHTML = `<strong>${juryName}:</strong> ${j_total}${j_vals.finalized ? ' <span class="finalized-indicator">✓</span>' : ''}`;
+                            allScores.appendChild(juryDiv);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Обновляем лидерборд на панели жюри
+        if(data.leaderboard) {
+            for(let i=0;i<data.leaderboard.length;i++){
+                let l=data.leaderboard[i];
+                let row=document.getElementById(`lb-${l.name}`);
+                if(row) {
+                    // Обновляем место (первая ячейка)
+                    let medal = '';
+                    if(i === 0) medal = '🥇';
+                    else if(i === 1) medal = '🥈';
+                    else if(i === 2) medal = '🥉';
+                    else medal = (i + 1).toString();
+                    row.cells[0].innerText = medal;
+                    
+                    // Обновляем баллы (третья ячейка)
+                    row.cells[2].innerText = l.total;
+                }
+            }
+        }
+    }
+}
+
+// Функция для обновления баллов
+function updateScore(participantId, juryId, contest, value) {
+    // Валидация: значение должно быть от 1 до 5
+    if (value < 1 || value > 5) {
+        alert('Балл должен быть от 1 до 5');
+        return;
+    }
+    
+    fetch('/update_score', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            participant_id: participantId,
+            jury_id: juryId,
+            contest: contest,
+            score: value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Обновляем отображение суммы
+            updateDisplay(participantId, juryId);
+        } else if (data.error) {
+            alert(data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Функция для финализации оценок
+function finalizeScores(participantId, juryId) {
+    if (confirm('Вы уверены, что хотите финализировать оценки? После этого их нельзя будет изменить.')) {
+        fetch('/finalize_scores', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                participant_id: participantId,
+                jury_id: juryId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Отключаем поля ввода
+                const inputs = document.querySelectorAll(`#inputs-${participantId}-${juryId} .score-input`);
+                inputs.forEach(input => input.disabled = true);
+                
+                // Заменяем кнопку на статус
+                const finalizeSection = document.getElementById(`finalize-${participantId}-${juryId}`);
+                finalizeSection.innerHTML = '<span class="finalized-text">✓ Финализировано</span>';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+
+// Функция для обновления отображения суммы
+function updateDisplay(participantId, juryId) {
+    const inputs = document.querySelectorAll(`#cell-${participantId}-${juryId} .score-input`);
+    const display = document.getElementById(`display-${participantId}-${juryId}`);
+    if (display) {
+        const contest1 = inputs[0].value;
+        const contest2 = inputs[1].value;
+        const contest3 = inputs[2].value;
+        display.textContent = `${contest1}+${contest2}+${contest3}`;
+    }
+}
+
+
+// Добавляем обработчики событий для полей ввода баллов
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработчики для полей ввода баллов
+    document.querySelectorAll('.score-input').forEach(function(input) {
+        input.addEventListener('change', function() {
+            const participantId = this.getAttribute('data-participant');
+            const juryId = this.getAttribute('data-jury');
+            const contest = this.getAttribute('data-contest');
+            const value = this.value;
+            updateScore(participantId, juryId, contest, value);
+        });
+    });
+    
+    // Обработчики для кнопок финализации
+    document.querySelectorAll('.finalize-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const participantId = this.getAttribute('data-participant');
+            const juryId = this.getAttribute('data-jury');
+            finalizeScores(participantId, juryId);
+        });
+    });
+});
+
+</script>
+</body>
+</html>

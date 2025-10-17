@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Зритель</title>
+<style>
+body {background:#0b0b0b; color:#0ff; font-family:'Courier New', monospace; margin:0; padding:0;}
+h1 {text-align:center; margin:10px;}
+.container {display:flex;}
+.sidebar {width:250px; background:#111; padding:10px; overflow-y:auto;}
+.main {flex:1; padding:10px; overflow:auto;}
+table {width:100%; border-collapse:collapse;}
+th,td {border:1px solid #0ff; padding:5px; text-align:center;}
+th {background:#222;}
+.highlight {animation: highlight 0.5s ease;}
+@keyframes highlight {0%{background:#0ff;color:#000;} 100%{background:#111;color:#0ff;}}
+.score-breakdown {font-size:12px; line-height:1.3;}
+.score-breakdown div {margin:2px 0;}
+.total-score {font-weight:bold; color:#0ff; border-top:1px solid #0ff; padding-top:2px; margin-top:4px;}
+</style>
+</head>
+<body>
+<h1>Зритель</h1>
+<div class="container">
+<div class="sidebar">
+<h3>Лидерборд</h3>
+<table id="leaderboard">
+<tr><th>Место</th><th>Участник</th><th>Баллы</th></tr>
+{% for l in leaderboard %}
+<tr id="lb-{{ l.name }}">
+  <td>
+    {% if loop.index == 1 %}🥇
+    {% elif loop.index == 2 %}🥈
+    {% elif loop.index == 3 %}🥉
+    {% else %}{{ loop.index }}
+    {% endif %}
+  </td>
+  <td>{{ l.name }}</td>
+  <td>{{ l.total }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<div class="main">
+<h3>Оценки участников</h3>
+<table id="score-table">
+<tr>
+<th>Участник</th>
+{% for j in jury_list %}<th>{{ j.name }}</th>{% endfor %}
+<th>Сумма</th>
+</tr>
+{% for p in participants %}
+<tr id="row-{{ p.id }}">
+<td>{{ p.name }}</td>
+{% for j in jury_list %}
+<td id="cell-{{p.id}}-{{j.id}}">
+  <div class="score-breakdown">
+    <div>Конкурс 1: {{ scores[p.id][j.id]['contest1'] }} баллов</div>
+    <div>Конкурс 2: {{ scores[p.id][j.id]['contest2'] }} баллов</div>
+    <div>Конкурс 3: {{ scores[p.id][j.id]['contest3'] }} баллов</div>
+    <div class="total-score">Сумма: {{ scores[p.id][j.id]['contest1'] + scores[p.id][j.id]['contest2'] + scores[p.id][j.id]['contest3'] }}</div>
+  </div>
+</td>
+{% endfor %}
+<td id="total-{{ p.id }}">{{ totals[p.id] }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+
+<script>
+let ws;
+function connectWebSocket() {
+    ws = new WebSocket("ws://"+location.host+"/ws");
+    
+    ws.onopen = function() {
+        console.log("WebSocket connected");
+    };
+    
+    ws.onclose = function() {
+        console.log("WebSocket disconnected, reconnecting...");
+        setTimeout(connectWebSocket, 1000);
+    };
+    
+    ws.onerror = function(error) {
+        console.log("WebSocket error:", error);
+    };
+    
+    ws.onmessage = handleMessage;
+}
+
+connectWebSocket();
+
+function handleMessage(event) {
+    console.log('Received message:', event.data);
+    let data=JSON.parse(event.data);
+    if(data.type==='score_update'){
+        console.log('Updating scores:', data.scores);
+        for(let p_id in data.scores){
+            for(let j_id in data.scores[p_id]){
+                let cell=document.getElementById(`cell-${p_id}-${j_id}`);
+                if(cell){
+                    let vals=data.scores[p_id][j_id];
+                    let total = vals.contest1 + vals.contest2 + vals.contest3;
+                    cell.innerHTML = `
+                        <div class="score-breakdown">
+                            <div>Конкурс 1: ${vals.contest1} баллов</div>
+                            <div>Конкурс 2: ${vals.contest2} баллов</div>
+                            <div>Конкурс 3: ${vals.contest3} баллов</div>
+                            <div class="total-score">Сумма: ${total}</div>
+                        </div>
+                    `;
+                    cell.classList.add('highlight');
+                    setTimeout(()=>cell.classList.remove('highlight'),500);
+                }
+            }
+            let totalCell=document.getElementById(`total-${p_id}`);
+            if(totalCell) totalCell.innerText=data.totals[p_id];
+        }
+        // Лидерборд
+        for(let i=0;i<data.leaderboard.length;i++){
+            let l=data.leaderboard[i];
+            let row=document.getElementById(`lb-${l.name}`);
+            if(row) {
+                // Обновляем место (первая ячейка)
+                let medal = '';
+                if(i === 0) medal = '🥇';
+                else if(i === 1) medal = '🥈';
+                else if(i === 2) medal = '🥉';
+                else medal = (i + 1).toString();
+                row.cells[0].innerText = medal;
+                
+                // Обновляем баллы (третья ячейка, так как теперь у нас 3 колонки)
+                row.cells[2].innerText = l.total;
+            }
+        }
+    }
+};
+</script>
+</body>
+</html>

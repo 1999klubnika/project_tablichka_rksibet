@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Конкурс Киберпанк</title>
+<style>
+body {margin:0; padding:0; background:#050505; color:#0ff; font-family:'Courier New', monospace;}
+.container {display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh;}
+h1 {font-size:3em; text-shadow:0 0 10px #0ff;}
+button {margin:10px; padding:15px 30px; font-size:1.5em; background:#0ff; color:#000; border:none; cursor:pointer; transition:0.3s;}
+button:hover {background:#0aa; transform:scale(1.1);}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Добро пожаловать на Конкурс</h1>
+<a href="{{ url_for('viewer') }}"><button>Зритель</button></a>
+<a href="{{ url_for('jury_login') }}"><button>Жюри</button></a>
+</div>
+</body>
+</html>
