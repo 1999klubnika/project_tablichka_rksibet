@@ -17,29 +17,14 @@ th {background:#222;}
 .score-breakdown {font-size:12px; line-height:1.3;}
 .score-breakdown div {margin:2px 0;}
 .total-score {font-weight:bold; color:#0ff; border-top:1px solid #0ff; padding-top:2px; margin-top:4px;}
+.finalized-indicator {color:#00ff00; font-weight:bold; font-size:11px;}
 </style>
 </head>
 <body>
 <h1>Зритель</h1>
 <div class="container">
 <div class="sidebar">
-<h3>Лидерборд</h3>
-<table id="leaderboard">
-<tr><th>Место</th><th>Участник</th><th>Баллы</th></tr>
-{% for l in leaderboard %}
-<tr id="lb-{{ l.name }}">
-  <td>
-    {% if loop.index == 1 %}🥇
-    {% elif loop.index == 2 %}🥈
-    {% elif loop.index == 3 %}🥉
-    {% else %}{{ loop.index }}
-    {% endif %}
-  </td>
-  <td>{{ l.name }}</td>
-  <td>{{ l.total }}</td>
-</tr>
-{% endfor %}
-</table>
+<h3><a href="{{ url_for('leaderboard') }}" style="color:#0ff;">Перейти к Лидерборду</a></h3>
 </div>
 
 <div class="main">
@@ -60,6 +45,9 @@ th {background:#222;}
     <div>Конкурс 2: {{ scores[p.id][j.id]['contest2'] }} баллов</div>
     <div>Конкурс 3: {{ scores[p.id][j.id]['contest3'] }} баллов</div>
     <div class="total-score">Сумма: {{ scores[p.id][j.id]['contest1'] + scores[p.id][j.id]['contest2'] + scores[p.id][j.id]['contest3'] }}</div>
+    {% if scores[p.id][j.id]['finalized'] %}
+    <span class="finalized-indicator">✓ Финализировано</span>
+    {% endif %}
   </div>
 </td>
 {% endfor %}
@@ -104,12 +92,14 @@ function handleMessage(event) {
                 if(cell){
                     let vals=data.scores[p_id][j_id];
                     let total = vals.contest1 + vals.contest2 + vals.contest3;
+                    let finalizedHtml = vals.finalized ? '<span class="finalized-indicator">✓ Финализировано</span>' : '';
                     cell.innerHTML = `
                         <div class="score-breakdown">
                             <div>Конкурс 1: ${vals.contest1} баллов</div>
                             <div>Конкурс 2: ${vals.contest2} баллов</div>
                             <div>Конкурс 3: ${vals.contest3} баллов</div>
                             <div class="total-score">Сумма: ${total}</div>
+                            ${finalizedHtml}
                         </div>
                     `;
                     cell.classList.add('highlight');
@@ -119,23 +109,7 @@ function handleMessage(event) {
             let totalCell=document.getElementById(`total-${p_id}`);
             if(totalCell) totalCell.innerText=data.totals[p_id];
         }
-        // Лидерборд
-        for(let i=0;i<data.leaderboard.length;i++){
-            let l=data.leaderboard[i];
-            let row=document.getElementById(`lb-${l.name}`);
-            if(row) {
-                // Обновляем место (первая ячейка)
-                let medal = '';
-                if(i === 0) medal = '🥇';
-                else if(i === 1) medal = '🥈';
-                else if(i === 2) medal = '🥉';
-                else medal = (i + 1).toString();
-                row.cells[0].innerText = medal;
-                
-                // Обновляем баллы (третья ячейка, так как теперь у нас 3 колонки)
-                row.cells[2].innerText = l.total;
-            }
-        }
+        // Лидерборд обновляется на отдельной странице, но если нужно, можно добавить логику
     }
 };
 </script>

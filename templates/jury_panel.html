@@ -44,23 +44,7 @@ th {background:#222;}
 <p>Вы можете редактировать только свою колонку (выделена зеленым). Остальные колонки доступны только для просмотра.</p>
 <p><strong>Важно:</strong> После выставления баллов нажмите "Финализировать" - после этого изменить оценки будет нельзя!</p>
 </div>
-<h3 style="margin-top:20px;">Лидерборд</h3>
-<table id="leaderboard" style="margin-top:10px;">
-<tr><th>Место</th><th>Участник</th><th>Баллы</th></tr>
-{% for l in leaderboard %}
-<tr id="lb-{{ l.name }}">
-  <td>
-    {% if loop.index == 1 %}🥇
-    {% elif loop.index == 2 %}🥈
-    {% elif loop.index == 3 %}🥉
-    {% else %}{{ loop.index }}
-    {% endif %}
-  </td>
-  <td>{{ l.name }}</td>
-  <td>{{ l.total }}</td>
-</tr>
-{% endfor %}
-</table>
+<h3 style="margin-top:20px;"><a href="{{ url_for('leaderboard') }}" style="color:#0ff;">Перейти к Лидерборду</a></h3>
 </div>
 
 <div class="main">
@@ -81,13 +65,13 @@ th {background:#222;}
   {% if j.id == jury.id %}
   <!-- Моя колонка - можно редактировать -->
   <div class="score-inputs" id="inputs-{{ p.id }}-{{ j.id }}">
-    <input type="number" min="1" max="5" value="{{ scores[p.id][j.id]['contest1'] }}" 
+    <input type="number" min="0" max="5" value="{{ scores[p.id][j.id]['contest1'] }}" 
            class="score-input" data-participant="{{ p.id }}" data-jury="{{ j.id }}" data-contest="contest1" 
            {% if scores[p.id][j.id]['finalized'] %}disabled{% endif %}>
-    <input type="number" min="1" max="5" value="{{ scores[p.id][j.id]['contest2'] }}" 
+    <input type="number" min="0" max="5" value="{{ scores[p.id][j.id]['contest2'] }}" 
            class="score-input" data-participant="{{ p.id }}" data-jury="{{ j.id }}" data-contest="contest2"
            {% if scores[p.id][j.id]['finalized'] %}disabled{% endif %}>
-    <input type="number" min="1" max="5" value="{{ scores[p.id][j.id]['contest3'] }}" 
+    <input type="number" min="0" max="5" value="{{ scores[p.id][j.id]['contest3'] }}" 
            class="score-input" data-participant="{{ p.id }}" data-jury="{{ j.id }}" data-contest="contest3"
            {% if scores[p.id][j.id]['finalized'] %}disabled{% endif %}>
   </div>
@@ -246,33 +230,15 @@ function handleMessage(event) {
             }
         }
         
-        // Обновляем лидерборд на панели жюри
-        if(data.leaderboard) {
-            for(let i=0;i<data.leaderboard.length;i++){
-                let l=data.leaderboard[i];
-                let row=document.getElementById(`lb-${l.name}`);
-                if(row) {
-                    // Обновляем место (первая ячейка)
-                    let medal = '';
-                    if(i === 0) medal = '🥇';
-                    else if(i === 1) medal = '🥈';
-                    else if(i === 2) medal = '🥉';
-                    else medal = (i + 1).toString();
-                    row.cells[0].innerText = medal;
-                    
-                    // Обновляем баллы (третья ячейка)
-                    row.cells[2].innerText = l.total;
-                }
-            }
-        }
+        // Лидерборд обновляется на отдельной странице
     }
 }
 
 // Функция для обновления баллов
 function updateScore(participantId, juryId, contest, value) {
-    // Валидация: значение должно быть от 1 до 5
-    if (value < 1 || value > 5) {
-        alert('Балл должен быть от 1 до 5');
+    // Валидация: значение должно быть от 0 до 5
+    if (value < 0 || value > 5) {
+        alert('Балл должен быть от 0 до 5');
         return;
     }
     
