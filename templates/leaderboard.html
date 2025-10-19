@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Лидерборд</title>
+<style>
+body {background:#0b0b0b; color:#0ff; font-family:'Courier New', monospace; margin:0; padding:0;}
+h1 {text-align:center; margin:10px;}
+.container {display:flex; justify-content:center; align-items:center; height:100vh;}
+table {width:50%; border-collapse:collapse;}
+th,td {border:1px solid #0ff; padding:10px; text-align:center;}
+th {background:#222;}
+.highlight {animation: highlight 0.5s ease;}
+@keyframes highlight {0%{background:#0ff;color:#000;} 100%{background:#111;color:#0ff;}}
+</style>
+</head>
+<body>
+<h1>Лидерборд</h1>
+<div class="container">
+<table id="leaderboard">
+<tr><th>Место</th><th>Участник</th><th>Баллы</th></tr>
+{% for l in leaderboard %}
+<tr id="lb-{{ l.name }}">
+  <td>
+    {% if loop.index == 1 %}🥇
+    {% elif loop.index == 2 %}🥈
+    {% elif loop.index == 3 %}🥉
+    {% else %}{{ loop.index }}
+    {% endif %}
+  </td>
+  <td>{{ l.name }}</td>
+  <td>{{ l.total }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<script>
+let ws;
+function connectWebSocket() {
+    ws = new WebSocket("ws://"+location.host+"/ws");
+    
+    ws.onopen = function() {
+        console.log("WebSocket connected");
+    };
+    
+    ws.onclose = function() {
+        console.log("WebSocket disconnected, reconnecting...");
+        setTimeout(connectWebSocket, 1000);
+    };
+    
+    ws.onerror = function(error) {
+        console.log("WebSocket error:", error);
+    };
+    
+    ws.onmessage = handleMessage;
+}
+
+connectWebSocket();
+
+function handleMessage(event) {
+    let data=JSON.parse(event.data);
+    if(data.type==='score_update'){
+        // Лидерборд
+        for(let i=0;i<data.leaderboard.length;i++){
+            let l=data.leaderboard[i];
+            let row=document.getElementById(`lb-${l.name}`);
+            if(row) {
+                // Обновляем место (первая ячейка)
+                let medal = '';
+                if(i === 0) medal = '🥇';
+                else if(i === 1) medal = '🥈';
+                else if(i === 2) medal = '🥉';
+                else medal = (i + 1).toString();
+                row.cells[0].innerText = medal;
+                
+                // Обновляем баллы (третья ячейка, так как теперь у нас 3 колонки)
+                row.cells[2].innerText = l.total;
+                row.classList.add('highlight');
+                setTimeout(()=>row.classList.remove('highlight'),500);
+            }
+        }
+    }
+};
+</script>
+</body>
+</html>

@@ -172,6 +172,12 @@ def viewer():
     leaderboard = get_leaderboard(totals,participants)
     return render_template('viewer.html',participants=participants,jury_list=jury,scores=scores,totals=totals,leaderboard=leaderboard)
 
+@app.route('/leaderboard')
+def leaderboard():
+    participants,jury,scores,totals = get_scores()
+    leaderboard = get_leaderboard(totals,participants)
+    return render_template('leaderboard.html', leaderboard=leaderboard)
+
 @app.route('/jury_login', methods=['GET','POST'])
 def jury_login():
     if request.method=='POST':
@@ -224,9 +230,9 @@ def update_score():
     contest = data['contest']
     value = float(data['score'])
     
-    # Валидация: балл должен быть от 1 до 5
-    if value < 1 or value > 5:
-        return jsonify(success=False, error="Балл должен быть от 1 до 5")
+    # Валидация: балл должен быть от 0 до 5
+    if value < 0 or value > 5:
+        return jsonify(success=False, error="Балл должен быть от 0 до 5")
     
     conn = get_db_connection()
     # Check if score record exists, if not create one
@@ -289,5 +295,4 @@ def broadcast_scores():
 
 if __name__=='__main__':
     init_db()  # Initialize database tables
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
-
+    app.run(debug=True,threaded=True)
