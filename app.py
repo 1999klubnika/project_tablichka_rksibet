@@ -67,8 +67,8 @@ def init_db():
         c.execute("INSERT OR IGNORE INTO participants (code, name) VALUES (?, ?)", (code, name))
 
     # Пользователь жюри с логином/паролем
-    login = 'RKSI'
-    password_hash = generate_password_hash('SIGMABOY')
+    login = ''
+    password_hash = generate_password_hash('')
     if not c.execute("SELECT * FROM jury_users WHERE login=?", (login,)).fetchone():
         c.execute("INSERT INTO jury_users (login, password_hash) VALUES (?, ?)", (login, password_hash))
 

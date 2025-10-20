@@ -2,86 +2,155 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Лидерборд</title>
+<title>RKSIBET — Лидерборд</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@700&display=swap" rel="stylesheet">
 <style>
-body {background:#0b0b0b; color:#0ff; font-family:'Courier New', monospace; margin:0; padding:0;}
-h1 {text-align:center; margin:10px;}
-.container {display:flex; justify-content:center; align-items:center; height:100vh;}
-table {width:50%; border-collapse:collapse;}
-th,td {border:1px solid #0ff; padding:10px; text-align:center;}
-th {background:#222;}
-.highlight {animation: highlight 0.5s ease;}
-@keyframes highlight {0%{background:#0ff;color:#000;} 100%{background:#111;color:#0ff;}}
+body {
+    margin:0;
+    padding:0;
+    background:#050505;
+    color:#0ff;
+    font-family:'Press Start 2P', monospace;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height:100vh;
+    overflow:hidden;
+    position:relative;
+}
+
+
+/* Таблица */
+table {
+    border-collapse:collapse;
+    width:70%;
+    max-width:900px;
+    text-align:center;
+    background:#111;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 0 30px rgba(0,255,255,0.3);
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    0% {opacity:0; transform: translateY(-50px);}
+    100% {opacity:1; transform: translateY(0);}
+}
+
+th, td {
+    padding:20px;
+    border-bottom:1px solid #0ff;
+    transition: all 0.3s ease;
+}
+
+th {
+    background:#222;
+    font-size:1.3em;
+    color:#0ff;
+    text-shadow:0 0 5px #0ff;
+}
+
+td {
+    font-size:1.2em;
+}
+
+/* Медали */
+.medal {
+    font-size:2em;
+    animation: medalBounce 0.6s ease;
+}
+
+@keyframes medalBounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Подсветка обновлений */
+.highlight {
+    animation: highlight 0.7s ease;
+}
+
+@keyframes highlight {
+    0% { background:#0ff; color:#000; }
+    100% { background:#111; color:#0ff; }
+}
+
+/* Hover на строки */
+tr:hover {
+    background:rgba(0,255,255,0.1);
+    transform:scale(1.02);
+    transition:0.3s;
+}
 </style>
 </head>
 <body>
-<h1>Лидерборд</h1>
-<div class="container">
+
+<div id="dvd-logo"></div>
+
+<h1>Лидерборд RKSIBET</h1>
+
 <table id="leaderboard">
-<tr><th>Место</th><th>Участник</th><th>Баллы</th></tr>
+<tr>
+    <th>Место</th>
+    <th>Участник</th>
+    <th>Баллы</th>
+</tr>
 {% for l in leaderboard %}
 <tr id="lb-{{ l.name }}">
-  <td>
-    {% if loop.index == 1 %}🥇
-    {% elif loop.index == 2 %}🥈
-    {% elif loop.index == 3 %}🥉
-    {% else %}{{ loop.index }}
-    {% endif %}
-  </td>
-  <td>{{ l.name }}</td>
-  <td>{{ l.total }}</td>
+    <td>
+        {% if loop.index == 1 %}<span class="medal">🥇</span>
+        {% elif loop.index == 2 %}<span class="medal">🥈</span>
+        {% elif loop.index == 3 %}<span class="medal">🥉</span>
+        {% else %}{{ loop.index }}
+        {% endif %}
+    </td>
+    <td>{{ l.name }}</td>
+    <td>{{ l.total }}</td>
 </tr>
 {% endfor %}
 </table>
-</div>
 
 <script>
 let ws;
 function connectWebSocket() {
     ws = new WebSocket("ws://"+location.host+"/ws");
     
-    ws.onopen = function() {
-        console.log("WebSocket connected");
-    };
-    
-    ws.onclose = function() {
+    ws.onopen = () => console.log("WebSocket connected");
+    ws.onclose = () => {
         console.log("WebSocket disconnected, reconnecting...");
         setTimeout(connectWebSocket, 1000);
     };
-    
-    ws.onerror = function(error) {
-        console.log("WebSocket error:", error);
-    };
-    
+    ws.onerror = (err) => console.log("WebSocket error:", err);
     ws.onmessage = handleMessage;
 }
-
 connectWebSocket();
 
 function handleMessage(event) {
-    let data=JSON.parse(event.data);
-    if(data.type==='score_update'){
-        // Лидерборд
-        for(let i=0;i<data.leaderboard.length;i++){
-            let l=data.leaderboard[i];
-            let row=document.getElementById(`lb-${l.name}`);
-            if(row) {
-                // Обновляем место (первая ячейка)
+    let data = JSON.parse(event.data);
+    if(data.type === 'score_update'){
+        data.leaderboard.forEach((l, i) => {
+            let row = document.getElementById(`lb-${l.name}`);
+            if(row){
+                // Обновляем место
                 let medal = '';
                 if(i === 0) medal = '🥇';
                 else if(i === 1) medal = '🥈';
                 else if(i === 2) medal = '🥉';
-                else medal = (i + 1).toString();
+                else medal = (i+1).toString();
                 row.cells[0].innerText = medal;
-                
-                // Обновляем баллы (третья ячейка, так как теперь у нас 3 колонки)
+
+                // Обновляем баллы
                 row.cells[2].innerText = l.total;
+
+                // Подсветка изменений
                 row.classList.add('highlight');
-                setTimeout(()=>row.classList.remove('highlight'),500);
+                setTimeout(()=>row.classList.remove('highlight'),700);
             }
-        }
+        });
     }
-};
+}
 </script>
 </body>
 </html>
