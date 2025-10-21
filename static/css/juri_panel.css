@@ -38,6 +38,14 @@ body {
   }
   .sidebar h3 {margin-top:0;}
 
+  #lead{
+    text-decoration: none;
+    color: #FFFFFF;
+    background-color: #527C8C;
+    border-radius: 15px;
+    height: 45px;
+    text-align: center;
+  }
   .main {
     flex:1; overflow:auto;
   }
@@ -70,15 +78,15 @@ body {
 
   /* Финализировано */
   .finalize-btn {
-    background:#ff3366; color:#000; font-weight:bold; border:none; border-radius:5px;
+    background:#527C8C; color:#FFFFFF; font-weight:bold; border:none; border-radius:5px;
     padding:5px 10px; cursor:pointer; transition:0.3s;
   }
-  .finalize-btn:hover {background:#ff66aa; transform:scale(1.05);}
-  .finalized-text {color:#00ff66; font-weight:bold;}
+  .finalize-btn:hover {background:#FFFFFF; color: #527C8C;transform:scale(1.05);}
+  .finalized-text {color:#FFFFFF; font-weight:bold;}
 
   /* Подсветка */
   .highlight {animation: highlight 0.5s ease;}
-  @keyframes highlight {0%{background:#0ff;color:#000;} 100%{background:#111;color:#0ff;}}
+  @keyframes highlight {0%{background:#8FBCD9;color:#527C8C;} 100%{background:#8FBCD9;color:#527C8C;}}
 
   /* Итоги */
   .total-score {font-weight:bold; color:#527C8C; margin-top:3px;}
