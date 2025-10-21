@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    background: #f2f2f2;
+    background-attachment: fixed;
+    background-size: cover;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+
+  }
+  header {
+    font-family: 'Montserrat';
+    color: #FFFFFF;
+    background:#527C8C;
+    padding:15px 30px;
+    font-size:1.5em;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  header a {color:#FFFFFF; text-decoration:none; transition:0.3s;}
+  header a:hover {color: #ff3366;}
+
+  .container {
+    font-family: 'Roboto';
+    font-size: 15pt;
+    color: #FFFFFF;
+    flex:1;
+    display:flex;
+    padding:20px;
+    gap:20px;
+  }
+  .sidebar {
+    width:280px;
+    background:#8FBCD9;
+    padding:20px;
+    border:3px solid #527C8C;
+    border-radius:10px;
+  }
+  .sidebar h3 {margin-top:0;}
+
+  .main {
+    flex:1; overflow:auto;
+  }
+  table {
+    width:100%; border-collapse:collapse;
+    table-layout:fixed;
+  }
+  th,td {
+    border:3px solid #527C8C; padding:5px; text-align:center;
+    position:relative;
+    transition:0.3s all;
+    color: #527C8C;
+  }
+  th {
+    background:#B2CED9;
+    color:#527C8C;
+    font-weight:bold;
+  }
+
+  /* Колонка текущего жюри */
+  .my-column {background:#8FBCD9 !important;}
+
+  /* Inputs */
+  .score-inputs {display:flex; gap:5px; justify-content:center; margin-bottom:5px;}
+  .score-input {
+    width:35px; padding:4px; background:#B2CED9; border:1px solid #527C8C; color:#FFFFFF; text-align:center;
+    border-radius:5px; transition:0.3s;
+  }
+  .score-input:focus {outline:none; box-shadow:0 0 10px #0ff;}
+
+  /* Финализировано */
+  .finalize-btn {
+    background:#ff3366; color:#000; font-weight:bold; border:none; border-radius:5px;
+    padding:5px 10px; cursor:pointer; transition:0.3s;
+  }
+  .finalize-btn:hover {background:#ff66aa; transform:scale(1.05);}
+  .finalized-text {color:#00ff66; font-weight:bold;}
+
+  /* Подсветка */
+  .highlight {animation: highlight 0.5s ease;}
+  @keyframes highlight {0%{background:#0ff;color:#000;} 100%{background:#111;color:#0ff;}}
+
+  /* Итоги */
+  .total-score {font-weight:bold; color:#527C8C; margin-top:3px;}
+  .participant-scores {font-size:12px; line-height:1.4; text-align:left;}
+  .jury-score {margin:2px 0; padding:2px; background:#B2CED9; border-radius:3px;}

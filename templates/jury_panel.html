@@ -3,91 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>RKSIBET — Панель Жюри</title>
-<style>
-  body {
-    margin:0; padding:0; font-family:'Courier New', monospace;
-    background:#0a0a0a; color:#0ff;
-    display:flex; flex-direction:column; min-height:100vh;
-  }
-  header {
-    background:#111;
-    padding:15px 30px;
-    font-size:1.5em;
-    display:flex; justify-content:space-between; align-items:center;
-    text-shadow:0 0 10px #0ff;
-  }
-  header a {color:#ff3366; text-decoration:none; transition:0.3s;}
-  header a:hover {text-shadow:0 0 10px #ff3366;}
-
-  .container {
-    flex:1;
-    display:flex;
-    padding:20px;
-    gap:20px;
-  }
-  .sidebar {
-    width:280px;
-    background:#111;
-    padding:20px;
-    border:1px solid #0ff;
-    border-radius:10px;
-    box-shadow:0 0 20px rgba(0,255,255,0.2);
-  }
-  .sidebar h3 {margin-top:0; text-shadow:0 0 5px #0ff;}
-  .instructions {
-    font-size:13px; line-height:1.5;
-    background:#000a; padding:15px; border-radius:8px;
-    border:1px solid #0ff;
-    box-shadow:0 0 10px rgba(0,255,255,0.2);
-  }
-
-  .main {
-    flex:1; overflow:auto;
-  }
-  table {
-    width:100%; border-collapse:collapse;
-    table-layout:fixed;
-  }
-  th,td {
-    border:1px solid #0ff; padding:5px; text-align:center;
-    position:relative;
-    transition:0.3s all;
-  }
-  th {
-    background:#111;
-    color:#0ff;
-    font-weight:bold;
-    text-shadow:0 0 5px #0ff;
-  }
-
-  /* Колонка текущего жюри */
-  .my-column {background:#001a00 !important; border:2px solid #00ff66 !important;}
-
-  /* Inputs */
-  .score-inputs {display:flex; gap:5px; justify-content:center; margin-bottom:5px;}
-  .score-input {
-    width:35px; padding:4px; background:#111; border:1px solid #0ff; color:#0ff; text-align:center;
-    border-radius:5px; transition:0.3s;
-  }
-  .score-input:focus {outline:none; box-shadow:0 0 10px #0ff;}
-
-  /* Финализировано */
-  .finalize-btn {
-    background:#ff3366; color:#000; font-weight:bold; border:none; border-radius:5px;
-    padding:5px 10px; cursor:pointer; transition:0.3s;
-  }
-  .finalize-btn:hover {background:#ff66aa; transform:scale(1.05);}
-  .finalized-text {color:#00ff66; font-weight:bold;}
-
-  /* Подсветка */
-  .highlight {animation: highlight 0.5s ease;}
-  @keyframes highlight {0%{background:#0ff;color:#000;} 100%{background:#111;color:#0ff;}}
-
-  /* Итоги */
-  .total-score {font-weight:bold; color:#0ff; margin-top:3px;}
-  .participant-scores {font-size:12px; line-height:1.4; text-align:left;}
-  .jury-score {margin:2px 0; padding:2px; background:#111; border-radius:3px;}
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/juri_panel.css') }}">
 </head>
 <body>
 <header>
@@ -97,20 +13,17 @@
 
 <div class="container">
 <div class="sidebar">
-  <h3>Инструкция</h3>
-  <div class="instructions">
     <p>Вы можете редактировать только свою колонку (зеленым выделена).</p>
-    <p><strong>Важно:</strong> После выставления баллов нажмите "Финализировать". Изменить будет нельзя!</p>
+    <p><strong style="color: #ff3366;">Важно:</strong> После выставления баллов нажмите "Финализировать". Изменить будет нельзя!</p>
     <p>Следите за суммой ваших баллов и за обновлениями в реальном времени.</p>
-  </div>
   <h3 style="margin-top:20px;"><a href="{{ url_for('leaderboard') }}">Перейти к Лидерборду</a></h3>
 </div>
 
 <div class="main">
-<h3>Оценки участников</h3>
+<h3 style="color: #527C8C;">Оценки участников</h3>
 <table id="score-table">
 <tr>
-  <th>Участник</th>
+  <th style="color: #527C8C;">Участник</th>
   {% for j in jury_list %}
     <th class="{% if j.id == jury.id %}my-column{% endif %}">{{ j.name }}</th>
   {% endfor %}
@@ -145,7 +58,7 @@
         {% endif %}
       </div>
     {% else %}
-      <div class="jury-score">
+      <div class="jury-score" style="color: #527C8C;">
         <div>Конкурс 1: {{ scores[p.id][j.id]['contest1'] }} баллов</div>
         <div>Конкурс 2: {{ scores[p.id][j.id]['contest2'] }} баллов</div>
         <div>Конкурс 3: {{ scores[p.id][j.id]['contest3'] }} баллов</div>

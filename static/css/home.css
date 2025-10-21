@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
+body{
+    background: linear-gradient(to top, #F2F2F2, #B2CED9);
+    background-attachment: fixed;
+    background-size: cover;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+#banner{
+    font-size: 58pt;
+    font-family: 'Montserrat';
+    color: #527C8C;
+    font-weight: 700;
+    text-align: center;
+
+    margin: 0 auto 20px auto;
+    padding: 0 20px;
+    
+    max-width: 1100px;
+    line-height: 1.2;
+    
+    margin-top: 50px;
+}
+
+#sembanner{
+    font-size: 32pt;
+    font-family: 'Montserrat';
+    color: #527C8C;
+    text-align: center;
+
+    margin: 0 auto 20px auto;
+    padding: 0 20px;
+}
+
+.buttons{
+    margin-top: 150px;
+    margin-left: 460px;
+    display: flex;
+}
+
+#juri_ch_btn{
+    z-index: 2;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+
+    background-color: #527C8C;
+    width: 350px;
+    height: 100px;
+    border-radius: 25px;
+
+    font-size: 30pt;
+    font-family: 'Roboto';
+    font-weight: bold;
+    color: #FFFFFF;
+
+    transition: all 0.6s ease-in-out;
+}
+
+#juri_ch:hover #juri_ch_btn{
+    background-color: #B2CED9;
+}
+
+#juri_ch{
+    position: relative;
+    text-decoration: none;
+}
+
+#juri_btn_txt{
+    position: absolute;
+    top: 60px;
+    
+    font-family: 'Roboto';
+    color: #E8EAED;
+    font-size: 15pt;
+    
+
+    width: 350px;
+    height: 0px;
+    opacity: 0;
+    border-radius: 25px;
+    
+    transition: all 0.6s ease-in-out;
+}
+
+#juri_ch:hover #juri_btn_txt{
+    position: absolute;
+    height: 300px;
+    opacity: 1;
+    background-color: #527C8C;
+    border-radius: 25px;
+}
+
+#viewer_ch_btn{
+    z-index: 2;
+    position: relative;
+    
+    background-color: #527C8C;
+    width: 350px;
+    height: 100px;
+    border-radius: 25px;
+
+    font-size: 30pt;
+    font-family: 'Roboto';
+    color: #E8EAED;
+    font-weight: bold;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+
+    transition: all 0.6s ease-in-out;
+}
+#viewer_ch:hover #viewer_ch_btn{
+    background-color: #B2CED9;
+}
+#viewer_ch{
+    position: relative;
+    text-decoration: none;
+    margin-left: 230px;
+}
+#viewer_btn_txt{
+    position: absolute;
+    top: 60px;
+
+    font-size: 15pt;
+    font-family: 'Roboto';
+    color: #E8EAED;
+    opacity: 0;
+
+    width: 350px;
+    height: 0px;
+    border-radius: 25px;
+
+    transition: all 0.6s ease-in-out;
+}
+#viewer_ch:hover #viewer_btn_txt{
+    position: absolute;
+    height: 300px;
+    opacity: 1;
+    background-color: #527C8C;
+    border-radius: 25px;
+}
