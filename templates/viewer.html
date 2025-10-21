@@ -19,6 +19,26 @@ body {
     position:relative;
 }
 
+/* Кнопка на главную */
+#home-btn {
+    position:absolute;
+    top:20px;
+    right:20px;
+    padding:12px 20px;
+    background:#0ff;
+    color:#000;
+    font-family:'Press Start 2P', monospace;
+    font-weight:bold;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    transition:0.3s;
+}
+#home-btn:hover {
+    background:#00cccc;
+    box-shadow:0 0 15px rgba(0,255,255,0.5);
+}
+
 /* Кнопка перейти к лидерборду */
 #leaderboard-btn {
     position:absolute;
@@ -144,7 +164,8 @@ tr:hover {
 </head>
 <body>
 
-<button id="leaderboard-btn" onclick="location.href='{{ url_for('leaderboard') }}'">Перейти к Лидерборду</button>
+<a id="leaderboard-btn" href="{{ url_for('leaderboard') }}">Перейти к Лидерборду</a>
+<a id="home-btn" href="{{ url_for('leaderboard') }}">На главную</a>
 
 <h1>Оценки участников RKSIBET</h1>
 

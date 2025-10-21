@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>RKSIBET — Новый профиль</title>
+<title>RKSIBET — Вход Админа</title>
 <style>
 body {
   margin:0; padding:0; font-family:'Courier New', monospace;
@@ -15,29 +15,28 @@ body {
 }
 h1 {margin-bottom:30px; font-size:2em; text-shadow:0 0 10px #0ff;}
 input {
-  width:300px; padding:12px; margin:10px 0;
+  width:250px; padding:10px; margin:10px 0;
   background:#222; border:2px solid #0ff; border-radius:5px;
   color:#0ff; font-size:16px; text-align:center;
 }
 input:focus {outline:none; box-shadow:0 0 15px rgba(0,255,255,0.5);}
 button {
-  padding:12px 25px; font-size:16px; font-weight:bold;
+  padding:10px 20px; font-size:16px; font-weight:bold;
   background:#0ff; color:#000; border:none; border-radius:5px;
-  cursor:pointer; transition:0.3s; width:100%;
+  cursor:pointer; transition:0.3s;
 }
-button:hover {background:#00cccc; transform:scale(1.02);}
+button:hover {background:#00cccc; transform:scale(1.05);}
 .error {color:#ff3366; margin-top:10px;}
-.info {margin-top:15px; opacity:0.8; font-size:14px;}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>Введите имя профиля</h1>
+  <h1>Вход Админа</h1>
   <form method="post">
-    <input type="text" name="name" placeholder="Например: Жюри1, Эксперт, Модератор" required>
-    <button type="submit">Создать профиль</button>
+    <input type="text" name="login" placeholder="Логин" required>
+    <input type="password" name="password" placeholder="Пароль" required>
+    <button type="submit">Войти</button>
   </form>
-  <div class="info">Вам будет присвоен уникальный код (например: A1B2)</div>
   {% if error %}
   <div class="error">{{ error }}</div>
   {% endif %}

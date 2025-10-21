@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>RKSIBET — Админ панель</title>
+<style>
+body {
+  margin:0; padding:0; font-family:'Courier New', monospace;
+  background:#050505; color:#0ff;
+}
+.container {
+  max-width:1200px; margin:0 auto; padding:20px;
+}
+h1 {text-align:center; color:#0ff; text-shadow:0 0 10px #0ff;}
+h2 {color:#0ff; border-bottom:2px solid #0ff; padding-bottom:5px;}
+table {
+  width:100%; border-collapse:collapse; margin:20px 0;
+  background:#111; border:2px solid #0ff;
+}
+th, td {
+  padding:10px; text-align:center; border:1px solid #0ff;
+}
+th {background:#222; color:#0ff;}
+tr:nth-child(even) {background:#1a1a1a;}
+input, button {
+  padding:8px; margin:5px; background:#222; border:2px solid #0ff;
+  color:#0ff; font-family:'Courier New', monospace;
+}
+button {
+  background:#0ff; color:#000; border:none; cursor:pointer;
+  padding:8px 15px;
+}
+button:hover {background:#00cccc;}
+.action-btn {background:#ff3366; color:#fff;}
+.action-btn:hover {background:#cc2a52;}
+.add-form {margin:20px 0; text-align:center;}
+.header {display:flex; justify-content:space-between; align-items:center;}
+.logout {color:#ff3366;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Админ панель</h1>
+    <a href="{{ url_for('logout') }}" class="logout">[Выход]</a>
+  </div>
+
+  <!-- УПРАВЛЕНИЕ УЧАСТНИКАМИ -->
+  <h2>Управление Участниками</h2>
+  
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Код</th>
+      <th>Имя</th>
+      <th>Действия</th>
+    </tr>
+    {% for p in participants %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td><strong>{{ p.code }}</strong></td>
+      <td>{{ p.name }}</td>
+      <td>
+        <a href="{{ url_for('reset_scores', id=p.id) }}" class="action-btn">Сбросить оценки</a>
+        <a href="{{ url_for('delete_participant', id=p.id) }}" class="action-btn" onclick="return confirm('Удалить участника?');">Удалить</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <div class="add-form">
+    <h3>Добавить Участника</h3>
+    <form method="post" action="{{ url_for('add_participant') }}">
+      <input type="text" name="code" placeholder="Код (K1)" required>
+      <input type="text" name="name" placeholder="Имя участника" required>
+      <button type="submit">Добавить</button>
+    </form>
+  </div>
+
+  <!-- УПРАВЛЕНИЕ ЖЮРИ -->
+  <h2>Управление Жюри</h2>
+  
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Код</th>
+      <th>Имя</th>
+      <th>Действия</th>
+    </tr>
+    {% for j in jury_list %}
+    <tr>
+      <td>{{ j.id }}</td>
+      <td><strong>{{ j.code }}</strong></td>
+      <td>{{ j.name }}</td>
+      <td>
+        <a href="{{ url_for('delete_jury', id=j.id) }}" class="action-btn" onclick="return confirm('Удалить жюри?');">Удалить</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <div class="add-form">
+    <h3>Добавить Жюри</h3>
+    <form method="post" action="{{ url_for('add_jury') }}">
+      <input type="text" name="name" placeholder="Имя профиля" required>
+      <button type="submit">Добавить</button>
+    </form>
+  </div>
+
+</div>
+</body>
+</html>
