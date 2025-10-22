@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+  background: linear-gradient(to top, #F2F2F2, #B2CED9);
+  background-attachment: fixed;
+  background-size: cover;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+h1 {
+  margin-bottom:30px;
+  text-align: center;
+  font-size:25pt;
+  color: #527C8C;
+  font-family: 'Montserrat';
+}
+form {
+  margin-bottom:20px;
+}
+/*Настройки кнопок*/
+select {
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  background:#8FBCD9;
+  border-radius:15px;
+  color:#FFFFFF;
+  font-size:15pt;
+  font-family:'Roboto';
+}
+select:focus {
+  outline:none;
+}
+.new-option {
+  color:#FFFFFF;
+  font-weight:bold;
+  background:#527C8C !important;}
+button {
+  padding:12px 25px;
+  font-size:15pt;
+  font-weight:bold;
+  background:#527C8C; color:#FFFFFF;
+  border:2px #527C8C solid;
+  border-radius:15px;
+  cursor:pointer;
+  transition:all 0.6s;
+  width:100%;
+}
+button:hover {
+  background:#FFFFFF;
+  color: #527C8C;
+}
+.error {color:#ff3366; margin-top:10px;}
+/* Кнопка выйти*/ 
+.back-link {
+  font-size: 15pt;
+  color:#527C8C;
+  text-decoration:none;
+  margin-top:20px;
+  display:inline-block;
+  transition: 0.6s;
+}
+.back-link:hover{
+  color: #ff3366;
+}

@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    background: linear-gradient(to top, #F2F2F2, #B2CED9);
+    background-attachment: fixed;
+    background-size: cover;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+::placeholder {
+    opacity: 1;
+    font-family: 'Roboto';
+    font-size: 10pt;
+    color: #527C8C;
+}
+header{
+    font-family: 'Montserrat';
+    color: #FFFFFF;
+    background:#527C8C;
+    padding:15px 30px;
+    font-size:10pt;
+    display:flex; justify-content:space-between; align-items:center;
+}
+h2{
+    color: #527C8C;
+    font-family: 'Montserrat';
+}
+.logout {
+    color:#FFFFFF;
+    text-decoration:none;
+    transition:0.3s;
+    font-size: 15pt;
+    font-family: 'Roboto';
+}
+.logout:hover {
+    color: #ff3366;
+}
+.container {
+    max-width:1200px;
+    margin:0 auto;
+    padding:20px;
+}
+
+table {
+    width:100%;
+    border-collapse:collapse;
+    margin:20px 0;
+    background:#B2CED9;
+    border:2px solid #527C8C;
+}
+th, td {
+    padding:10px;
+    text-align:center;
+    border:1px solid #527C8C;
+    font-family: 'Roboto';
+    color: #527C8C;
+}
+th {
+    background:#527C8C;
+    color:#FFFFFF;
+    
+}
+tr:nth-child(even) {
+    background:#B2CED9;
+}
+input, button {
+    padding:8px;
+    margin:5px;
+    background:#B2CED9;
+    border:2px solid #527C8C;
+    color:#527C8C;
+    font-family:'Roboto';
+}
+button {
+    background:#527C8C;
+    color:#FFFFFF;
+    border:2px #527C8C solid;
+    cursor:pointer;
+    padding:8px 15px;
+    transition: 0.6s;
+}
+button:hover {
+    background:#FFFFFF;
+    color: #527C8C;
+}
+.action-btn {
+    background:#527C8C; 
+    color:#fff;
+    text-decoration: none;
+    transition: 0.3s;
+    border-radius: 5px;
+    padding: 2px;
+}
+.action-btn:hover {
+    background:#FFFFFF;
+    color: #ff3366;
+}
+.add-form {
+    margin:20px 0;
+    text-align:center;
+    font-family: 'Roboto';
+    color: #527C8C;
+}

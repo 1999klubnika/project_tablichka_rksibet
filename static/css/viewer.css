@@ -10,18 +10,17 @@ body {
     padding: 0;
     
 }
-
 #banner{
     text-align: center;
     font-family: 'Montserrat';
     color: #527C8C;
     font-size: 50pt;
 }
-#viewer-btn{
+/* Кнопка на главную */
+#home-btn {
     position:absolute;
     top:20px;
-    left:20px;
-    width: auto;
+    right:20px;
     padding:12px 20px;
     background:#527C8C;
     color:#FFFFFF;
@@ -34,22 +33,51 @@ body {
     text-decoration: none;
     border: 2px #527C8C solid;
 }
-
-#viewer-btn:hover{
+#home-btn:hover {
+    background:#FFFFFF;
     color: #527C8C;
-    background-color: #FFFFFF;
+}
+
+/* Кнопка перейти к лидерборду */
+#leaderboard-btn {
+    position:absolute;
+    top:20px;
+    left:20px;
+    padding:12px 20px;
+    background:#527C8C;
+    color:#FFFFFF;
+    font-family:'Roboto';
+    font-weight:bold;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    transition:0.6s;
+    text-decoration: none;
+    border: 2px #527C8C solid;
+}
+#leaderboard-btn:hover {
+    background:#FFFFFF;
+    color: #527C8C;
+}
+
+/* Заголовок */
+@keyframes glow {
+    0% { text-shadow:0 0 5px #527C8C; }
+    100% { text-shadow:0 0 20px #527C8C,0 0 40px #527C8C,0 0 60px #527C8C; }
 }
 
 /* Таблица */
 table {
-    justify-content: center;
     border-collapse:collapse;
-    width:70%;
-    max-width:900px;
+    width:85%;
+    max-width:1200px;
     text-align:center;
     background:#B2CED9;
-    border-radius:15px;
+    border-radius:20px;
     overflow:hidden;
+    margin-bottom:50px;
+    font-family: 'Roboto';
+    color: #527C8C;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -62,49 +90,31 @@ table {
 }
 
 th, td {
-    padding:20px;
-    border-bottom:2px solid #527C8C;
+    padding:15px;
+    border-bottom:1px solid #527C8C;
     transition: all 0.3s ease;
     font-family: 'Roboto';
-    color: #FFFFFF;
 }
 
 th {
     background:#527C8C;
-    font-size:1.3em;
+    font-size:20pt;
     color:#FFFFFF;
 }
 
 td {
-    font-size:15pt;
-    color: #527C8C;
-}
-
-/* Медали */
-.medal {
-    font-size:2em;
-    animation: medalBounce 0.6s ease;
-}
-
-@keyframes medalBounce {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
+    font-size:1.1em;
+    position:relative;
 }
 
 /* Подсветка обновлений */
 .highlight {
-    animation: highlight 0.7s ease;
+    animation: pulse 0.7s ease;
 }
 
-@keyframes highlight {
-    0% { background:#8FBCD9; color:#FFFFFF; }
-    100% { background:#B2CED9; color:#FFFFFF; }
+@keyframes pulse {
+    0% { transform:scale(1); box-shadow:0 0 5px #527C8C; }
+    50% { transform:scale(1.2); box-shadow:0 0 20px #527C8C; }
+    100% { transform:scale(1); box-shadow:0 0 5px #527C8C; }
 }
 
-/* Hover на строки */
-tr:hover {
-    background:rgba(0,255,255,0.1);
-    transform:scale(1.02);
-    transition:0.3s;
-}

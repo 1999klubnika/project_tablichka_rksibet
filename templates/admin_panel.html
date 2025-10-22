@@ -3,47 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <title>RKSIBET — Админ панель</title>
-<style>
-body {
-  margin:0; padding:0; font-family:'Courier New', monospace;
-  background:#050505; color:#0ff;
-}
-.container {
-  max-width:1200px; margin:0 auto; padding:20px;
-}
-h1 {text-align:center; color:#0ff; text-shadow:0 0 10px #0ff;}
-h2 {color:#0ff; border-bottom:2px solid #0ff; padding-bottom:5px;}
-table {
-  width:100%; border-collapse:collapse; margin:20px 0;
-  background:#111; border:2px solid #0ff;
-}
-th, td {
-  padding:10px; text-align:center; border:1px solid #0ff;
-}
-th {background:#222; color:#0ff;}
-tr:nth-child(even) {background:#1a1a1a;}
-input, button {
-  padding:8px; margin:5px; background:#222; border:2px solid #0ff;
-  color:#0ff; font-family:'Courier New', monospace;
-}
-button {
-  background:#0ff; color:#000; border:none; cursor:pointer;
-  padding:8px 15px;
-}
-button:hover {background:#00cccc;}
-.action-btn {background:#ff3366; color:#fff;}
-.action-btn:hover {background:#cc2a52;}
-.add-form {margin:20px 0; text-align:center;}
-.header {display:flex; justify-content:space-between; align-items:center;}
-.logout {color:#ff3366;}
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_panel.css') }}">
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1>Админ панель</h1>
+  <header>
+    <h1 id="banner">Админ панель</h1>
     <a href="{{ url_for('logout') }}" class="logout">[Выход]</a>
-  </div>
+  </header>
+<div class="container">
+  
 
   <!-- УПРАВЛЕНИЕ УЧАСТНИКАМИ -->
   <h2>Управление Участниками</h2>

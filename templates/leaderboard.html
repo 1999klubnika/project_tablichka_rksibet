@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <title>RKSIBET — Лидерборд</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/leaderboard.css') }}">
+
 </head>
 <body>
+
+<a id="viewer-btn" href="{{ url_for('viewer') }}">Вернуться к оценкам</a>
 
 <div id="dvd-logo"></div>
 
@@ -50,24 +53,37 @@ connectWebSocket();
 function handleMessage(event) {
     let data = JSON.parse(event.data);
     if(data.type === 'score_update'){
+        // Получаем таблицу и очищаем все строки кроме заголовка
+        let table = document.getElementById('leaderboard');
+        while (table.rows.length > 1) {
+            table.deleteRow(1);  // Удаляем строки начиная со второй (индекс 1)
+        }
+
+        // Перестраиваем таблицу на основе отсортированного leaderboard
         data.leaderboard.forEach((l, i) => {
-            let row = document.getElementById(`lb-${l.name}`);
-            if(row){
-                // Обновляем место
-                let medal = '';
-                if(i === 0) medal = '🥇';
-                else if(i === 1) medal = '🥈';
-                else if(i === 2) medal = '🥉';
-                else medal = (i+1).toString();
-                row.cells[0].innerText = medal;
+            let row = table.insertRow();  // Добавляем новую строку
+            row.id = `lb-${l.name}`;  // Устанавливаем ID для возможных будущих ссылок
 
-                // Обновляем баллы
-                row.cells[2].innerText = l.total;
+            // Ячейка с местом/медалью
+            let placeCell = row.insertCell(0);
+            let medal = '';
+            if (i === 0) medal = '<span class="medal">🥇</span>';
+            else if (i === 1) medal = '<span class="medal">🥈</span>';
+            else if (i === 2) medal = '<span class="medal">🥉</span>';
+            else medal = (i + 1).toString();
+            placeCell.innerHTML = medal;
 
-                // Подсветка изменений
-                row.classList.add('highlight');
-                setTimeout(()=>row.classList.remove('highlight'),700);
-            }
+            // Ячейка с именем
+            let nameCell = row.insertCell(1);
+            nameCell.textContent = l.name;
+
+            // Ячейка с баллами
+            let totalCell = row.insertCell(2);
+            totalCell.textContent = l.total;
+
+            // Добавляем анимацию подсветки
+            row.classList.add('highlight');
+            setTimeout(() => row.classList.remove('highlight'), 700);
         });
     }
 }
