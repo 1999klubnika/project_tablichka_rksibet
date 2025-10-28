@@ -16,7 +16,18 @@ body {
     font-family: 'Montserrat';
     color: #527C8C;
     font-size: 50pt;
+
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 100%;
+    max-width: 1000px;
+    padding: 10px;
+    margin: 0 auto;
 }
+
 #viewer-btn{
     position:absolute;
     top:20px;
@@ -78,6 +89,10 @@ th {
 td {
     font-size:15pt;
     color: #527C8C;
+}
+
+tr {
+    height: 90px;
 }
 
 /* Медали */

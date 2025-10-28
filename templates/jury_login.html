@@ -7,15 +7,17 @@
 </head>
 <body>
 <div class="container">
-  <h1 id="banner">Вход Жюри</h1>
+  <h1 id="banner">Жюри-Панель</h1>
+  
+  {% if error %}
+  <div class="error-banner">{{ error }}</div>
+  {% endif %}
+  
   <form method="post">
     <input type="text" name="login" placeholder="Логин" required id="login">
     <input type="password" name="password" placeholder="Пароль" required id="pass">
     <button type="submit" id="sub">Войти</button>
   </form>
-  {% if error %}
-  <div class="error">{{ error }}</div>
-  {% endif %}
 </div>
 </body>
 </html>
